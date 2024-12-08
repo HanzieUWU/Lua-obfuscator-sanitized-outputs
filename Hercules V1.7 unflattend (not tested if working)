@@ -1,0 +1,308 @@
+watermark, emptyFunc, enabled, one, zero = 'Protected By Hercules V1.7', function()
+end, true, 1, 0;
+
+local vmExecute, vmCreate, decoder, bytecodeReader;
+local maxStack = 50;
+local selectFunc = select;
+local createTable = function(size)
+    return {}
+end;
+local unpackFunc = unpack or table.unpack;
+local packArgs = function(...)
+    return {
+        n = selectFunc('#', ...),
+        ...
+    }
+end;
+local copyValues = function(src, srcPos, length, destPos, dest)
+    for i = zero, length - srcPos do
+        dest[destPos + i] = src[srcPos + i]
+    end
+end;
+local bitwiseAnd = function(x, y)
+    local result = zero;
+    local power = one;
+    while x > zero and y > zero do
+        if x % (2) == one and y % (2) == one then
+            result = result + power
+        end;
+        power = power * (2)
+        x = math.floor(x / (2))
+        y = math.floor(y / (2))
+    end;
+    return result
+end;
+local leftShift = function(num, bits)
+    return num * (2) ^ bits
+end;
+local rightShift = function(num, bits)
+    return math.floor(num / (2) ^ bits)
+end;
+local bitwiseOr = function(x, y)
+    local result = zero;
+    local power = one;
+    while x > zero or y > zero do
+        local bitX = x % (2)
+        local bitY = y % (2)
+        if bitX == one or bitY == one then
+            result = result + power
+        end;
+        x = math.floor(x / (2))
+        y = math.floor(y / (2))
+        power = power * (2)
+    end;
+    return result
+end;
+local cleanupClosures = function(closures, threshold)
+    for idx, closure in pairs(closures) do
+        if closure.N >= threshold then
+            closure.m = closure.M[closure.N]
+            closure.M = closure;
+            closure.N = 'm'
+            closures[idx] = nil
+        end
+    end
+end;
+local getOrCreateClosure = function(closures, index, value)
+    local closure = closures[index]
+    if not closure then
+        closure = {
+            N = index,
+            M = value
+        }
+        closures[index] = closure
+    end;
+    return closure
+end;
+decoder = function(encoded, charset)
+    local charsetLen, decoded = #charset, {}
+    local charMap = {}
+    for i = 1, charsetLen do
+        charMap[charset:sub(i, i)] = i - (1)
+    end;
+    for line in encoded:gmatch("[^\10]+") do
+        local value = 0;
+        for i = 1, #line do
+            value = value * charsetLen + charMap[line:sub(i, i)]
+        end;
+        decoded[#decoded + 1] = string.char(value)
+    end;
+    encoded = table.concat(decoded)
+    local pos = one;
+    local readByte = function()
+        local byte = string.byte(encoded, pos, pos)
+        pos = pos + one;
+        return byte
+    end;
+    local readShort = function()
+        local b1, b2 = string.byte(encoded, pos, pos + 2)
+        pos = pos + 2;
+        return b2 * (256) + b1
+    end;
+    local readInt = function()
+        local b1, b2, b3, b4 = string.byte(encoded, pos, pos + 3)
+        pos = pos + 4;
+        return b4 * (16777216) + b3 * (65536) + b2 * (256) + b1
+    end;
+    bytecodeReader = function()
+        local chunk = {
+            n = readByte(),
+            c = readByte(),
+            d = readByte(),
+            x = {},
+            D = {},
+            V = {}
+        }
+        for i = one, readInt() do
+            local m = readInt()
+            local S = readByte()
+            local type = readByte()
+            local instruction = {
+                m = m,
+                S = S,
+                A = readShort()
+            }
+            local flags = {
+                b = readByte(),
+                c = readByte()
+            }
+            if type == one then
+                instruction.B = readShort()
+                instruction.C = readShort()
+                instruction.s = flags.b == one and instruction.B > 255;
+                instruction.a = flags.c == one and instruction.C > 255
+            elseif type == 2 then
+                instruction.F = readInt()
+                instruction.g = flags.b == one
+            elseif type == 3 then
+                instruction.f = readInt() - (131071)
+            end;
+            chunk.x[i] = instruction
+        end;
+        for i = one, readInt() do
+            local constType = readByte()
+            if constType == one then
+                chunk.D[i - one] = readByte() ~= zero
+            elseif constType == 3 then
+                chunk.D[i - one] = (function()
+                    local mantissaLow = readInt()
+                    local mantissaHigh = readInt()
+                    local normalized = one;
+                    local mantissa = bitwiseOr(leftShift(bitwiseAnd(mantissaHigh, 1048575), 32), mantissaLow)
+                    local exponent = bitwiseAnd(rightShift(mantissaHigh, 20), 2047)
+                    local sign = (- one) ^ rightShift(mantissaHigh, 31)
+                    if exponent == zero then
+                        if mantissa == zero then
+                            return sign * zero
+                        else
+                            exponent = one;
+                            normalized = zero
+                        end
+                    elseif exponent == 2047 then
+                        if mantissa == zero then
+                            return sign * one / zero
+                        else
+                            return sign * zero / zero
+                        end
+                    end;
+                    return math.ldexp(sign, exponent - (1023)) * (normalized + mantissa / (2) ^ (52))
+                end)()
+            elseif constType == 4 then
+                chunk.D[i - one] = (function()
+                    local str;
+                    local len = readInt()
+                    if len == zero then
+                        return
+                    end;
+                    str = string.sub(encoded, pos, pos + len - one)
+                    pos = pos + len;
+                    return str
+                end)()
+            end
+        end;
+        for i = one, readInt() do
+            chunk.V[i - one] = bytecodeReader()
+        end;
+        for i, instr in ipairs(chunk.x) do
+            if instr.g then
+                instr.D = chunk.D[instr.F]
+            else
+                if instr.s then
+                    instr.A = chunk.D[instr.B - (256)]
+                end;
+                if instr.a then
+                    instr.C = chunk.D[instr.C - (256)]
+                end
+            end
+        end;
+        return chunk
+    end;
+    return bytecodeReader()
+end;
+vmExecute = function(state, env, closures)
+    local instructions = state.x;
+    local constants = state.Z;
+    local varargs = state.v;
+    local stackTop = -one;
+    local closureTable = {}
+    local stack = state.X;
+    local pc = state.z;
+    while enabled do
+        local inst = instructions[pc]
+        local opcode = inst.S;
+        pc = pc + one;
+        if opcode == 1 then
+            stack[inst.A] = inst.D
+        elseif opcode == 0 then
+            stack[inst.A] = stack[inst.B]
+        elseif opcode == 22 then
+            pc = pc + inst.f
+        elseif opcode == 23 then
+            local val1, val2;
+            if inst.s then
+                val1 = inst.A
+            else
+                val1 = stack[inst.B]
+            end;
+            if inst.a then
+                val2 = inst.C
+            else
+                val2 = stack[inst.C]
+            end;
+            if val1 == val2 == (inst.A ~= 0) then
+                pc = pc + instructions[pc].f
+            end;
+            pc = pc + 1
+        elseif opcode == 30 then
+            local regA = inst.A;
+            local regB = inst.B;
+            local count;
+            if regB == 0 then
+                count = stackTop - regA + 1
+            else
+                count = regB - 1
+            end;
+            cleanupClosures(closureTable, 0)
+            return unpackFunc(stack, regA, regA + count - 1)
+        elseif opcode == 4 then
+            local closure = closures[inst.B]
+            stack[inst.A] = closure.M[closure.N]
+        elseif opcode == 5 then
+            stack[inst.A] = env[inst.D]
+        elseif opcode == 6 then
+            local key;
+            if inst.a then
+                key = inst.C
+            else
+                key = stack[inst.C]
+            end;
+            stack[inst.A] = stack[inst.B][key]
+        elseif opcode == 28 then
+            local regA = inst.A;
+            local regB = inst.B;
+            local regC = inst.C;
+            local limit;
+            if regB == 0 then
+                limit = stackTop - regA
+            else
+                limit = regB - 1
+            end;
+            local result = packArgs(stack[regA](unpackFunc(stack, regA + 1, regA + limit)))
+            local resultCount = result.n;
+            if regC == 0 then
+                stackTop = regA + resultCount - 1
+            else
+                resultCount = regC - 1
+            end;
+            copyValues(result, 1, resultCount, regA, stack)
+        end;
+        state.z = pc
+    end
+end;
+vmCreate = function(chunk, env, closures)
+    local wrapper = function(...)
+        local args = packArgs(...)
+        local stack = createTable(chunk.d)
+        local varargs = {
+            b = zero,
+            B = {}
+        }
+        copyValues(args, one, chunk.c, zero, stack)
+        if chunk.c < args.n then
+            local startPos = chunk.c + one;
+            local count = args.n - chunk.c;
+            varargs.b = count;
+            copyValues(args, startPos, startPos + count - one, one, varargs.B)
+        end;
+        local state = {
+            v = varargs,
+            X = stack,
+            x = chunk.x,
+            Z = chunk.V,
+            z = one
+        }
+        return vmExecute(state, env, closures)
+    end;
+    return wrapper
+end;
+vmCreate(decoder('\13\10\13\10+\10\16\10\13\10\13\10\13\10\23\10\13\10\13\10\13\10\23\10+\10\13\10\13\10\21\10\13\10\13\10\13\10\13\10\13\10\19\10\21\13\10\21\13\10\13\10\19\10\21\10\13\10\13\10\13\10\21\10\13\10\13\10\21\10\21\10\21\21\10+\13\10\13\10\13\10\21\10+\10\21\10\13\10\21\10\13\10+\10\13\10\13\10\13\10`\10+\13\10\13\10\21\10`\10\21\10\13\10\13\10\13\10\13\10+\10\13\10+\10\13\10\19\10\11\13\10\21\13\10\13\10\19\10\21\10\13\10\13\10\13\10\21\10\13\10\13\10\11\10\21\10\21\31\10+\13\10\21\13\10\13\10\31\10\21\10\21\10\13\10\21\10\21\10\13\10\13\10+\10\21\10)\10\13\10\13\10+\13\10)\10\11\10\13\10\13\10\13\10\13\10\13\10\13\10+\10\13\10%\10\13\10+\13\10\13\10%\10\21\10\13\10\13\10\13\10\13\10\21\10\13\10\13\10\13\10\23\10\13\10\21\10\13\10\23\10+\10\13\10\13\10\21\10\13\10>\10\13\10\13\10\13\10\21\21\10\21\13\10\21\10\13\10\21\10+\10\21\10\13\10\21\10\13\10\23\10\13\10\13\10\13\10`\10\21\13\10\13\10\21\10`\10\21\10\13\10\13\10\13\10\13\10+\10\13\10\21\10\13\10%\10\13\10+\13\10\13\10%\10\21\10\13\10\13\10\13\10\13\10\21\10\13\10\13\10\13\10\19\10\13\10\13\10\13\10>\10\23\10\13\10\13\10\13\10\21&\10\21$\10\21\18\10\21{\10\21|\10>\10?\10\13\10\13\10\13\10\21|\10\21$\10\21\27\10\21\6\10\21\1\10\21~\10\21\12\10\11\10\13\10\13\10\13\10\13\10\13\10\13\10\11\9\10\25\10>\10\4\10\13\10\13\10\13\10\21G\10\21{\10\21\15\10\21\15\10\21$\10\21\1\10\21\27\10\21\26\10\21\6\10\21\1\10\21$\10>\10\23\10\13\10\13\10\13\10\21\9\10\21\15\10\21\6\10\21\1\10\21\27\10>\10\21\10\13\10\13\10\13\10\21\18\10\13\10\13\10\13\10\13', '\13\21+\11>\23\19?\8\5E\4\16\30\3:\20#,DC\22)\31^\24.<`]%([\2\18G&$~|*\6_\29\26@\1\12\9=\15\17\27{!}\7;\28F\14\0/\25'), getfenv and getfenv(0) or _ENV)()
