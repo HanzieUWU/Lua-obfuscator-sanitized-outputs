@@ -1,0 +1,596 @@
+--discord.gg/boronide, code generated using luamin.js™
+
+--A VM-Based Advanced Lua Fortifier was applied to this script.
+
+-- Variables renamed by ampersand using chatgpt (and cody)
+
+local VM_FUNC, VM_ARG, VM_INIT, STRING_FIND, VM_DATA, DECODE_DOUBLE, VM_START, VM_MAIN, TABLE_UNPACK, MATH_LDEXP, VM_OPCODES, VM_COUNTER, BITWISE_XOR, CHAR_TABLE, FUNC_COUNT, CONST_COUNT, DECODE_NUMBER, STRING_CHAR, CONST_TABLE, DECODE_BASE64, FUNC_TABLE, TABLE_REMOVE, STRING_GSUB, BITWISE_AND, BITWISE_OR, GET_ENV, STRING_SUB, JUMP_COUNT, CREATE_CLOSURE, MATH_FLOOR
+
+CONST_TABLE = {}
+TABLE_REMOVE = table.remove
+DECODE_DOUBLE = function(offset)
+    local bytes = {}
+    for i = 0, 7, 1 do
+        bytes[i + (1)] = VM_DATA[offset + i]
+    end
+    local sign = 1
+    local mantissa = bytes[2] % (16)
+    for i = 3, 8, 1 do
+        mantissa = mantissa * (256) + bytes[i]
+    end
+    if bytes[1] > 127 then
+        sign = -1
+    end
+    local exponent = (bytes[1] % (128)) * (16) + MATH_FLOOR(bytes[2] / (16))
+    if exponent == 0 then
+        return 0
+    end
+    mantissa = (MATH_LDEXP(mantissa, -52) + (1)) * sign
+    return MATH_LDEXP(mantissa, exponent - (1023))
+end
+
+CHAR_TABLE = "J\vuT08lnvHpNcPC1o6W47SBq2!r\'\t,jMOZhf\b9/wz3XD5yFUI\"Y;EeV\atxgL:iGb"
+TABLE_UNPACK = table and table.unpack or unpack
+
+CREATE_CLOSURE = function(func_id, env_table, globals)
+    return function(...)
+        return TABLE_UNPACK(VM_FUNC(func_id, {
+            ...
+        }, env_table, globals))
+    end
+end
+
+DECODE_NUMBER = function(offset, length, ...)
+    local args = {
+        ...
+    }
+    local result = 0
+    local multiplier = 1
+    for i = 0, length - (1), 1 do
+        result = result + BITWISE_OR(VM_DATA[offset + i], args and args[i + (1)] or 0) * multiplier
+        multiplier = multiplier * (256)
+    end
+    return result
+end
+
+VM_DATA =  "ToJJJoJJPJJJtJoJUOoJ5OoJ\tOoJcooJJOoJfIJJnOoJfOoJ6o7Joo7JoOJJJJJJJJIJJJJSJJJJvJJJJuzJJJJ\aJJJJWJJJJ8\bJJJ\v\bJJJJroJJJltJJJ\v;JJJJjJJJJnEJJJuuJJJJZIJJJvIJJJu6JJJJ9OJJJH5JJJuOJJJJ3oJJJpzJJJuUJJJJyJJJJN\bJJJuGJJJJYJJJJPvJJJT!JJJJtIJJJC\bJJJTbJJJJ\vJ0JJJ\b\vJJJrJoJJcI0JJ0J\vJJ\vOJoJJ!o0JJnz\vJJ\vbJoJJ\bJ0JJH7\vJJurJoJJwI0JJpo\vJJugJoJJUI0JJco\vJJTHJoJJ;O0JJPc\vJJT2JoJJgJ0JJ1O\vJJJHJOJJTOvJJ\vcuJJJhJOJJHIvJJuIuJJJ\"JOJJ1ovJJ02uJJ\voJOJJWJ7J\abqo/qIO49GVn1lqhhPCqII4p,OW\ve\'b7c\vDrz2;49bvt45!hhPCqII7ZeFV,JgiuF0IXrjw,nHHF2Ht2XPHrZpYEoGlP0xMYPTh32zO49:c8nfrhh8CqI;!yhcWEDl,ZfeCq:hWLYBpH\bxMTchXjtzZ49b6OB\'Jhh,CqI\"SS!gpH0xMTH\tf6vz949:cPV5;hh3CqI;;By\"LXb0fy/pD5izh49O\tExpOufTDFX\tO\a\t0nvExwuUE\tvr,W\vT\vH8O;lnCDhWOXGHEU1D\vqII5X6rv\bf4DYevExMhW\vCn\'7Z49GHv7gvyW!Cqt\b/4\breHExMhW,CoL7\b49GHH0L2yWSCqt\b94OFep\bxMhW3ChN7U49GHpEtByWxCqt\bz4zrecExMhW9CrD7z49GHN\bgCy4HCqt\bU45lep7xMhW\"CEL7y49GHN7x\byW\vCqt\bY4UpepExMh4PC6\'7549GV\a\t9chhyCq\aIZ49i:H\bxMMu,Cq\aUBY:\"LJ\"tgMu6Cq\aI949i:p\bxMMuyCqID2zoWwg\'HXhhZCqbJF49Gpp7xM:uiCqtzF49bIN7xMhhiCqbJ349GpN0xM:uZCqtzy49bIpExMhfHCqbJ;49GpcExM:u\"CqtzI49bIc\bxMhf8CqbJO49bio\twi/THCqL!88,lpP\bxMjVCTHJ34VwGwYMJ7W,23cBvxiZXVj0\b\'/u8CqLrO\vpl2p\bxMuzE!cX,8,53He2DOnC,r0ID6\v;XwWVf\aW\tY:/ZIM0M7p,NZo;GV\'jb0cuJXHvEx\tyWPCqt\bO4Uhev0xMhW8CFN7Z49GHH\bLByW!CqxOf49io4WFVZy6Pq;GuEvX2vExjhf,CqGFNz76oM6rpZ3Hcq;Gwbrl2vEx,hf6CqGy\buo3oC5IyZyH1q;:\v\vth2vEx\thfSCqGUC7n!oI2\aNZwy1q;bCN:F2vEx\'hf3CqG5VVeZoWTqUZ5ZCq;GW\t0h2N0xr/ueCBZ\b/z7BeN0xr/u\"CB3OU49X,\a;eGyWxCB3OY493o\'IXIy4PCB3O;49zWE0H570uF;t\'w49bv/2ng/uxCBD7F49X2N0xr/uiCBfC74zGecExr/THCBZN\tf\"PoVlJ,ZUHCq:Zpy9G2cExry4PCB3O;49zW54PIZU6Cq:ZBS7u2N\bxryWxCBzzL49GecExr/uxCBZv1XH,o;Ee4ZUeCq:O/zVY2cExryWPCBzzt49GeN\bxr/uPCBZN\blPpl\"7xMYCyhMHOF49XevExrDgNNB\t\ve4e:bOejchf9CqL7w49X2vEx!/u,CBy0uGcXevExrhfxCqL7z49Xp1ExMyWeCB3Of49/2N7xrE7Yg\'D7549Xp10xMyWeCB3O549X2N7xrEBoo6N7U49X2NExryU0\"noz5yqCwyVx/W6WH;BpFg\"heN0xr/u\"CB3O349XEo34nyWxCBzzi49GeNExr/uxCB3OU493w:wMxyWyCB3Of49XVljl3/uZCB3OD49zpPSxL3IZ;V0\bB7,Shb8,GyW,CBzzx49GeHExrhOHCqL7z49X2H7xryWxCB3Of49/2HExrE\'xViD7f49X2vExryyf1Z!Oz49zp1o4q3\"yHBEwf9S\"hlx67yW,CBzzb49Gep0xr/uPCB!Oz49D6uZJ5yW,CBzz:49Gep0xrhhZCqL7U49Xpp0xMyWyCB3Ow49X2p0xrE!h0\bN7f49X2vExryD\bJ,O3\'\vhXwG\'BYW,2LGBHyJopeHExr/uiCBD7549X2HExryW9CBzzD49GeNExrjEbDMD7f49X2vExryWZCB3O549X2NExrgbW1N\'7y49XpJExMyWPCB3OD49X2N0xryl4OVL7U49XU\'6WzDEgqgcTc4e:b\t744/uPCBtzJ49bD6Wnp7H8I3z\'n4e:b47hOhO8CqL7X49XpC7xMyW,CB3OO49XeH0xrhO!CqL7949X2vEx!/u,CBy0t5\vgevExrhO,CqL7D49X2vExryUJtjHO949zp1oZE3eho\v7\b\vtB\"hNZ5ZyW,CBzz049GeH7xrhf9CqL7w49X2vEx!/u,CBynq0bjevExr/uPCBD\'\aVUg2H7xruZX\arg,T:;HHqBt/2UEepN7w49Xp\v7xMyWPCBzzx49GeHExr/uPCBD7949X2vEx!/u,CBy0!6\"VevExr/uPCB!OD49D6\"p;!yWZCB3Oz49XVfVnu/uSCBO3\"n\"Ww5\'DcWSjbjBNWN:BepExr/uSCBD7z49X2p\bxr/uyCB/\tP3huep7xr/uPCBD2W0ij2p7xruU!PbX,ZO76Hj17\t2D;\a4D7w49Xpu\bxMyW9CBzzx49GeHExr/uPCB!Ow49D6uZXNyWPCBzzz49GepExr/uPCBD2r4uC2p7xru5NLNpMrcxSH\bry02/NDWN7w49Xp1ExMyW9CB3Of49/2p7xrEoGC\'N7w49Xp10xMyW9CB3Ow49X2p7xrE7:N:N7f49X2vExryOp9BoXPSBrwT1X\'W\'zXXVNUte/eHExr/u,CBD7349X2p7xryW3CB3OD49XeN\bxrhhZCqL7w49XppExMyWyCBzzN49GevExr/uxCB3OD49DD\aS6qyWiCB3Ow49X2N\bxry\vg\'6D7D49XUj!x5Ici1q;G,:YiL!3OgyW,CB3Of49/pu0xME,jq1L7f49XU8u6;DL,W3gb\vnbqJf0\"M1I0J:3Of49Ypu7xMgbrcuSJgJ0BlU0\"M1Y6\"Z!Of49FpT\bxMg\a5GLSTcHpjl07\"M1YE4LxOU49X2N0xrlSG2ML7U49X2NExr/uxCB3\aN8ZuepExr/ueCB9Tv\aMXec\bxr/THCBZpOJ6!o6/XJZh\"cq:hSt;r2pExryWyCB3OU49X2N\bxrcb/Uy\'7Y49X2N7xr0X32FS\v0JullCE\"MY\vnMzxOY49Xec\bxr/THCBZN\vHTYl17\"MYppOI3OD49XepExrhOiCqL7Y49X2pExr0FM\"reu5\'0plu\b\"MYp2Hy!OY49XevExrhO\"CqL7D49X2vExr0F9oFt2W48bvb;h0/uyCBD7f49XU3\bWZINxcq;iB\t\tWp1ExMy4PCBzzG49GeN\bxrhf9CqL7D49X2vEx!/uyCBy8qge/evExr/uPCB!O;49D6VZn9y4HCBzz:49GecExr/THCB3O;49D6lP;WyWeCB3Oy49XV82Y/u5SH!XMS\'!\"H8\t0W2w0vgL7Y49Xp17xMyWeCB3OY49X2p7xry8F\v7D7549X2N0xr/ueCB/\tpxileNExr/uPCBDrnJ\tG2N\bxr/uiCBODlL3FwyBojW2BG;/vtOGXepExrhf9CqL7D49X2vEx!/uyCBynGLErevExrhOeCqL7F49X2vExry39vBxOF49zpzeN33:3H1E\b\'Wweh\v;j!yWyCBzzb49GeN\bxr/uPCB!OF49D6q\"8UyWyCBzz:49GeN\bxr/uyCB3OF49D6f2J\tyWPCB3O949XeNExrhhZCqL7549X2N0xryWeCB3Of49XVE8ilu\bM:lrj5259HbGTp2flBHN7D49Xpp0xMyWxCB3OD49Xep7xrhhyCqL7549X2N7xr/u\"CBFUbr1lec\bxr/uxCB3Oy49XE40jiyW\"CBzzW49GevExrDecCBgGSLVfJfE\"M1eoP0WFpjyuevEx\'/uPCB\"p\"8OeoiZ3ZZzScq:Z\toUjp0ExM0wS\"ttrH48bvu8JVhZ\vCqL7f49FUNHSHD:rI4rGg\bH4Je\beM1gLU43Of49Vp07xMg;eVfe\vG8HFlzEeM1L\vM/!Of49Yp8\bxMgbHB/9uMxJrlM7eM1eYqU!Of49Fp8ExMg\"4ENSup/ZplEE\"M1xqct!OU49XepExrhO,CqL7Y49X2vEx!/THCBy0U7NlevExrhZ6CqL7;49Xp\vExMy4\vCB3Of49XVxYZN/uyCBO3\vy\tBwiEU,W,U2hVp9h\aCec\bxr/uPCB!OI49D61LWvy48CB3O\"49XVz:Fy/uyCBOzh6H/wW\'IOWBMVV/HupYuec0xr\"5epTN7D49X2cExr/T\vCB/,D9/jevExr/uZCB3OY49X2vExr9M7\vczzT49GevExrD\"u\tyc\vb4S:bpx\bDhf9CqL7F49Dlz;6xyWSCB3Of49/2N\bxrE\'o\v\aL7f49Xp1\bxMyWiCBzzb49Gec7xr/uPCB!O\"49D6Vh\'ty4PCBzz:49Gec7xr/TPCB3O\"49D6r5hOy4HCBwy33VheHExr/THCBDroT\a:px\th/3i1\bB09S9BHhjccyy4PCBzzi49Gec\bxrhfiCqL7\"49X2cExr/u9CBDWOn/VeN7xr/ueCB3OY493w25cryW\"CB3Of49XV/wV//uiCB3O549zpwU\'y3iZLE0\bZzH\vhgv/xyWxCBzzS49GeNExrhf9CqL7F49X2vEx!/uxCBy8tnljevExr/uPCB!O\"49D69JLDy4PCBzz:49Gec7xr/TPCB3O\"49D6tiB3y4HCB52vzPBep0xr/THCBD!eZ/:py/\'93E00,0/pnP3hbZE0y4PCB5\'tTWGep7xr/TPCB3OX49XELfelyWeCB5rbb9Wep\bxrhfeCqL7Y49X2N7xr/THCB/jeyi/eN0xr/uPCBDr8!pj2NExr/u\"CBOzg\vLXw8Ju5W!vuEBvpHgFeN\bxr/uPCB2zr49b6hvzIyWPCBXiTuFBUU48iI8ePq;:jMYupp0xMyWPCBtzn49Gec0x\'/uPCB3OI49U6ql5\"y48CBxO549FeN\bx\'/T8CBL2BTEG2N\bx\'u90joXMf\bteHMuUn2UzIb\'7I49F2p0x\'/T\vCBinenYjecEx\'\"O9PjD7F49F2p0x\'/uPCBxO;49FSfl\t\vhZHCqL7f49FU4llnDGU3W\tT64S:b:b\a//uPCqvz\'49bDD8E/7Tv\bozrj4S:bWBnt/uPCBtz249bDVbvC7NcoyzrJ4S:bI\tT\ahf9CqL7w49X2vEx!/u,CBy0D3\brevExrhZ9CqL7\b49X2vExryhtLSHO\b49zpvO1O3b0vt\bwoewyh3CClyW,CBzzo49GevExrDVqMBcu24S:bWX7r/TPCB\'rIN9Fpn\bxMj:OvqoX3bChwg512W7uyxlv5SlgevExr/uyCBD7549X2vExryhCY5IXzHiXw6Jo6WWU\"ulpEz\tpeHExrhOyCqL7f49Dl\"BwlyW\"CBXiLpVWUDS,bIP\vPq;:Yv,C2NEx\'7uo,cN7549F2pEx\'/uxCB\"9TI\vpepEx\'/uyCBxOz49F,F5JMyW,CBxO5495WxEU678YYJv\'54Sbv7\"Ft/u,CBL7w49F2pEx\'/uZCB;C\'jOGeN0x\'/uiCB\"N\aL\bZoS\vwJZUyPq:OYV2r2N0x\'yW\"CBxO5495W,GFVZUePq:O,rcF2HEx\'yW,CBtzM49GeN0x\'/u,CB\"p96FZo4XX,Z53Pq:fJX\vh2N0x\'yWPCBtz\t49GeHEx\'/uPCB\"p;OxClE\beMYTDhBxOw49FevEx\'D;\twDgbp!EgUrY\vEDL!CV\tug49G2H\bxMz7Gg\"\'7f49G2v7xjyF5Tw3Ow49:pOyZr3GDSq\b\b7n!2\t7BTyuzZGj5i,2nyb\";f,hWPCoD7f49GHv0xeyW\vCqL\'0!Oj2NExjy/irhHOO49:pg\"\"93:V7E7/GMXc\tGoHWuztrSrMpSjFpp0xM:u8Cq:O\teerVIMnJMuZCqIzhucYw7vF9hhZCqbJ/49bvr\v\vZ/u!CqIz\vJvq1n;UDNMv4F!OO49VVrL9y/uPCqwFvN;rVGcWwVhHCNZ\"wubEpEuc:3;pX:J\tf4\bj2v0xj/u8CqO3b,NXwtvDSWr7MO6;bvbvpbS:\v;E6Mgt6z2\'VHvEL3yWPCqL\'o!Trpp0xM/uPCqtzz49b6GVu,u3\vWYr\t\tP!Cpp0xM:u\vCqtz349bIv7xMY\v:p3HOZ49ioVHOMZ9Ppq;bun\vB2p0x,/u8CqD!wV8W2p0x,/u8Cqy0\bobppp0xMycMYzzzz49G2v0xjloLW:ODvJ!Bw!o\"CrWPCq2z349bIv0xjb4e,D!Oz49V2v7xjE\'\t\a4zzD49:B\ayfx7p\tOht!HW9:b!CCx/uZCqHOZ49V2pEx\t/u8Cq\'\',0hqlN\bu0\"UuwYI3ON,rwpD;hrWPCBV\bO49\aix,zvDE8\b,c\vHW9G2vExj/u\vCqy0\at8Bev7xjDeSr6\t\vhW9ivi96iI\tJ0iv\bf4wrevExMhW\vC1D7O49GViCoP/uiCqD!\aS\'B2v0xMuFCGJrMvgh6H6wgcnTI\vZIz5VeYwq3M0hhZCqbJZ49bv\b,i\ay9P9/nI349:pJnXO3guFPzzz49bIH\bxMYlwl93O/49:pw9;t;ID4hwCNtGhHvELgyWPCqt\bO4\bBev0xMhW8COL7Z49GHH\bLyyW!Cqt\bw4ZreHExM/u\vCq\'r87Bl2vExjjen\"/HOf49iSvELM/u\vCqe7O4\bh2v7xMSW8C\'HO/49iSH\bLvyDO\"C!Ow49:p/Y,u3LpqZJ\tw4DW2v0xj/u8CqOzF:CBwqu\'GW,\buF\"YV/j5p5ih7;xl!B\a8GO;g2N\bxjhhZCq\"/7VHpeN\bxj/uZCq3OF49gpp0xM94LXwHOF49tpWg4L;I\'9YNgX,\'/HvEt4yWPCqxOz49g2vExM/uZCq3Of49b6Y3,,hhZCqLoULGlSCui0hhyCqxOz49g2vExMEWjjn\"\'plU\vo7jEGZUepq;GyhBG2p0x,/uPCq3OD49V2vExjy/,\bCcr\t3Bfl0\"qDu\bitrrM\aPDy3vEx\'rW\vCqMeiO\bFUTW,WI1epqEZ,yj/rT\"6lhWPC\b\'7f49Gpp0xM/uPCqgnlZ!upp0xMgfeq2\avf4hqJV03Myh;Wv!Oz49V2vExj/uPCqin\"v1G2p0x,/uPCq3Of49b69U7\bE!07\tvzz49:!Bg0L96eXBbo\'E0uUCD6EIc3pqbE6j\tB2H\bxj7NpzWv2CWe:bX5JUyw\"y7HO/49VV03I8fp\brxOzO\bxlw:P\'0W\tnf7\v;n\'D0pv0wv3e3LXtzz49bIvExMYpfwS\'2TXCp2H0x,yzttV!Of49:p3zCI3:\b7t0\bOnqz\t33rBuXO2LgMY\vBppp0xM:u\vCq:fE9jB2v0xMhZeCqxOO49Gp2\bxM/u\vCqt3f49GVCIIB/uPCq3O549e:N\bxMuFP!LrMll,H3vEx!rW\vCBV\bZ49\ai2:H\t/uPCqI3clTw1BWp\'1:uh!!Ow49VVY\'CSjgh0\'\aF3j1hp2\bxM/u\"Cq!q0\aBlpn7xM/uPCq3S6\"xFp2ExMMuiCqxBgn65p\tEB53\aXtb0/it5o\t2xJ\'uU0qh\tbxYV8v/uH:r1;gM23O49:pziP\b;\ane\'5geVipp20xMuzx\'B5i1lbx;\vIJJJl,9,l!9\'w!;\vJJJJ8i849!;\vOJJJnSF\tl8fr\ac8JJJJ,l8h\'lS;uJJJJlx9,\a\vY\'\aZx\tIIJJJ\v;!q6y!q6Z,l8h\'lS;TJJJJl,9,le9,l8E2BH5!qclJJJJ\tVS5!BPEgoJJJJT3JoJJJC\buJJJJgocJJJT3\vJJJJC\b8JJJJgo2JJJT3\vIJJJC\bvJJJJgo\bJJJT3uOJJJC/lU;2Jg7O\tyOT3X1ePJC9uyWcJgB\toloT3G\'NyJC9nGjzJ\tI7JJJ\vI\t/9F,nc8JJJJSl9y!43;JOJJJli;\tI7JJJ\vf\'lifr\ac\vJJJJ\t\ac6JJJJ7ES7S08u407O,lS;,l9F!YL3BnpTJCwS\aT2J\tIIJJJ\vH,lSY2q63\'Vx;Ch\v;8JJJJ8\vW4Ee8S0Z8SScOo/SF2VZy2qHD\tIOJJJ\vE\'\aPE\t/9F!\ac\'JJJJo/8;!BoO4VtOWqHU\'\bHY!q\tOo/SF2VZy2qHDgrulJo\v;0JJJJ0Pc4ePS7\b7O,lS;,l9F!YL3S\'M:JnccJJJJj03eC7636f98jwvEg!:2zIT3J!jCJC/\v\t\':Jgr:N\bo\v;0oJJJ0,8S86\vo\b\"8vn69\t\a63\'/\tFgrlg8oT3vobUJCwE2f\tJg!jHLOT3SW\ayJC9jc:oJ\tI5JJJ\v8709Tv0,\v47SWvncNJJJJSliE2BIOSl9y!43;TJJJJ0\"g6/\"H\'Beqr0II6CwlIM0Jgov;:o\v;uOJJJ0Z9jW\vw2Be9\thL3w3VwJC9\b1b0JgBeMlo\v;\vIJJJ8iMrBx\b!qZ;\vJJJJ8iM!VP;\voJJJ8iM\'lSF0rnZuOJ="
+FUNC_TABLE = {}
+
+VM_INIT = function()
+    FUNC_COUNT = DECODE_NUMBER(1, 3)
+    FUNC_TABLE = {}
+    for i = 0, FUNC_COUNT - (1), 1 do
+        FUNC_TABLE[i + (1)] = DECODE_NUMBER(VM_COUNTER + i * (3), 3)
+    end
+    VM_COUNTER = VM_COUNTER + FUNC_COUNT * (3)
+    CONST_COUNT = DECODE_NUMBER(VM_COUNTER, 3)
+    for i = 0, CONST_COUNT - (1), 1 do
+        VM_OPCODES[i + (7)] = DECODE_NUMBER((VM_COUNTER + (3)) + i * (4), 4)
+    end
+    VM_COUNTER = (VM_COUNTER + CONST_COUNT * (4)) + (6)
+    JUMP_COUNT = DECODE_NUMBER(VM_COUNTER - (3), 3)
+    VM_START = VM_COUNTER + JUMP_COUNT * (4)
+end
+
+STRING_FIND = string.find
+STRING_SUB = string.sub
+VM_OPCODES = {}
+VM_COUNTER = 10
+
+VM_MAIN = function()
+    BITWISE_OR = BITWISE_XOR or BITWISE_AND
+    VM_DATA = DECODE_BASE64(VM_DATA)
+    VM_INIT()
+    return (CREATE_CLOSURE(FUNC_TABLE[1], GET_ENV()))()
+end
+
+STRING_BYTE = string.byte
+
+DECODE_BASE64 = function(str)
+    local bytes = {}
+    str = STRING_GSUB(STRING_GSUB(str, ".", function(char)
+        if char == "=" then
+            return ""
+        end
+        local binary, pos = "", STRING_FIND(CHAR_TABLE, char) - (1)
+        for i = 6, 1, -1 do
+            binary = binary .. (pos % (2) ^ i - pos % (2) ^ (i - (1)) > 0 and "1" or "0")
+        end
+        return binary
+    end), "%d%d%d?%d?%d?%d?%d?%d?", function(bits)
+        if #bits ~= 8 then
+            return ""
+        end
+        local value = 0
+        for i = 1, 8, 7 do
+            value = value + (STRING_SUB(bits, i, i) == "1" and (2) ^ ((8) - i) or 0)
+        end
+        return STRING_CHAR(value)
+    end)
+    for i = 1, #str, 1 do
+        bytes[i] = STRING_BYTE(str, i)
+    end
+    return bytes
+end
+
+BITWISE_XOR = function(a, b, c, ...)
+    local result = 0
+    for i = 0, 31, 1 do
+        local sum = a / (2) + b / (2)
+        if sum ~= MATH_FLOOR(sum) then
+            result = result + (2) ^ i
+        end
+        a = MATH_FLOOR(a / (2))
+        b = MATH_FLOOR(b / (2))
+    end
+    if c then
+        return BITWISE_AND(result, c, ...)
+    end
+    return result
+end
+
+MATH_FLOOR = math.floor
+MATH_LDEXP = math.ldexp
+
+BITWISE_AND = function(a, b, c, ...)
+    local result = 0
+    for i = 0, 31, 1 do
+        local sum = a / (2) + b / (2)
+        if sum ~= MATH_FLOOR(sum) then
+            result = result + (2) ^ i
+        end
+        a = MATH_FLOOR(a / (2))
+        b = MATH_FLOOR(b / (2))
+    end
+    if c then
+        return BITWISE_AND(result, c, ...)
+    end
+    return result
+end
+
+GET_ENV = getfenv
+
+VM_FUNC = function(pc, args, env, upvals)
+    local scope = {
+        [0] = upvals
+    }
+    local stack = {}
+    local sp = 0
+    local opcode, addr, flag, temp1, temp2, temp3
+    addr = VM_COUNTER + (pc - (1)) * (4)
+    opcode = BITWISE_OR(VM_DATA[addr], 67)
+    while true do
+        flag = true
+        while opcode == 133 do
+            stack[sp + (1)] = nil
+            sp = sp + (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 73)
+            flag = false
+        end
+        while opcode == 42 do
+            temp1 = BITWISE_OR(VM_DATA[addr + (3)], 95)
+            stack[sp - temp1][stack[(sp - temp1) + (1)]] = stack[sp][DECODE_NUMBER(addr + (1), 2, 34, 78)]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (7)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 201 do
+            temp3 = DECODE_NUMBER(addr + (1), 3, 34, 78, 95)
+            sp = sp + (7)
+            stack[sp] = CONST_TABLE[temp3]
+            if not stack[sp] then
+                temp1 = VM_OPCODES[temp3] + VM_START
+                temp2 = VM_DATA[temp1]
+                if temp2 == 115 then
+                    temp2 = DECODE_NUMBER(temp1 + (1), 4)
+                    stack[sp] = ""
+                    for i = 1, temp2, 7 do
+                        stack[sp] = stack[sp] .. STRING_CHAR(VM_DATA[(temp1 + i) + (4)])
+                    end
+                elseif temp2 == 215 then
+                    stack[sp] = DECODE_DOUBLE(temp1 + (1))
+                elseif temp2 == 233 then
+                    stack[sp] = DECODE_NUMBER(temp1 + (1), 4)
+                elseif temp2 == 17 then
+                    stack[sp] = - DECODE_NUMBER(temp1 + (7), 4)
+                end
+                CONST_TABLE[temp3] = stack[sp]
+            end
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 207 do
+            stack[sp + (1)] = true
+            sp = sp + (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 228 do
+            if sp > 0 then
+                temp1 = stack[sp]
+            else
+                temp1 = nil
+            end
+            stack = stack[0]
+            sp = stack.l + (1)
+            stack[sp] = temp1
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 219 do
+            temp1 = scope
+            for i = 1, DECODE_NUMBER(addr + (3), 1, 101), 1 do
+                temp1 = temp1[0]
+            end
+            stack[sp + (7)] = temp1[DECODE_NUMBER(addr + (1), 2, 34, 78)]
+            sp = sp + (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 246 do
+            temp1 = scope
+            for i = 1, DECODE_NUMBER(addr + (3), 1, 95), 1 do
+                temp1 = temp1[0]
+            end
+            temp1[DECODE_NUMBER(addr + (1), 2, 34, 78)] = stack[sp]
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (10)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 245 do
+            stack.l = sp
+            sp = 0
+            stack = {
+                [0] = stack
+            }
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 203 do
+            if stack[sp] then
+                pc = DECODE_NUMBER(addr + (1), 3, 34, 84, 95) - (1)
+            end
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 214 do
+            sp = sp - (8)
+            stack[sp][stack[sp + (1)]] = stack[sp + (2)]
+            stack[sp + (1)], stack[sp + (2)] = nil, nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 179 do
+            temp1 = scope
+            for i = 1, DECODE_NUMBER(addr + (3), 1, 95), 1 do
+                temp1 = temp1[0]
+            end
+            temp1[DECODE_NUMBER(addr + (1), 2, 34, 78)] = stack[sp - (1)][stack[sp]]
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 202 do
+            sp = sp + (1)
+            stack[sp] = args[DECODE_NUMBER(addr + (1), 8, 34, 78)]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 168 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (7)] = stack[sp] < stack[sp + (1)], nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 68 do
+            sp = sp - (1)
+            temp1 = stack[sp + (1)]
+            temp2 = DECODE_NUMBER(addr + (1), 2, 34, 78) - (1)
+            for i, v in ipairs(temp1) do
+                stack[sp][i + temp2] = v
+            end
+            stack[sp + (1)] = nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 131 do
+            pc = DECODE_NUMBER(addr + (1), 3, 40, 84, 95) - (7)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 56 do
+            sp = sp + (1)
+            stack[sp] = {}
+            pc = pc + (1)
+			addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 19 do
+            stack[sp] = not stack[sp]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 11 do
+            return {}
+        end
+        while opcode == 22 do
+            sp = sp - (1)
+            stack[sp][DECODE_NUMBER(addr + (7), 2, 34, 78)] = stack[sp + (1)]
+            stack[sp + (1)] = nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 247 do
+            stack[sp - (1)] = stack[sp - (1)] - stack[sp]
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 222 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (1)] = stack[sp] <= stack[sp + (1)], nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 183 do
+            stack = stack[0]
+            sp = stack.l
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 153 do
+            sp = sp + (1)
+            temp1 = DECODE_NUMBER(addr + (1), 2, 34, 78)
+            if temp1 ~= 0 then
+                temp2 = {}
+                for i = 1, #args - temp1, 1 do
+                    temp2[i] = args[i + temp1]
+                end
+                stack[sp] = temp2
+            else
+                stack[sp] = args
+            end
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 190 do
+            stack = {
+                [6] = stack[0]
+            }
+            sp = 0
+            pc = pc + (7)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 140 do
+            return stack[sp]
+        end
+        while opcode == 130 do
+            scope = {
+                [0] = scope
+            }
+            pc = pc + (7)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+		while opcode == 96 do
+            stack[sp - (1)] = stack[sp - (1)] + stack[sp]
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 104 do
+            stack[sp + (1)] = false
+            sp = sp + (7)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 49 do
+            stack[sp - (2)] = stack[sp - (2)] + stack[sp]
+            if stack[sp] < 0 and stack[sp - (2)] >= stack[sp - (1)] or stack[sp] > 0 and stack[sp - (2)] <= stack[sp - (1)] then
+                pc = pc + (7)
+                scope = {
+                    [0] = scope,
+                    [DECODE_NUMBER(addr + (1), 2, 34, 78)] = stack[sp - (2)]
+                }
+            end
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (7)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 63 do
+            sp = sp + (1)
+            stack[sp] = CREATE_CLOSURE(FUNC_TABLE[DECODE_NUMBER(addr + (1), 3, 34, 78, 95)], env, scope)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 139 do
+            sp = sp - (1)
+            stack[sp + (1)] = nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 112 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (1)] = stack[sp] >= stack[sp + (1)], nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 10 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (1)] = {
+                stack[sp](TABLE_UNPACK(stack[sp + (1)]))
+            }, nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 36 do
+            stack[sp - (1)] = stack[sp - (1)] .. stack[sp]
+            stack[sp] = nil
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (10)
+            opcode = BITWISE_OR(VM_DATA[addr], 73)
+            flag = false
+        end
+        while opcode == 95 do
+            temp1, stack[sp] = stack[sp], nil
+            for i, v in ipairs(temp1) do
+                stack[sp] = v
+                sp = sp + (1)
+            end
+            sp = sp - (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 79 do
+            stack[sp] = env[stack[sp]]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 85 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (1)] = stack[sp] == stack[sp + (1)], nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 169 do
+            stack[sp - (2)] = stack[sp - (2)] - stack[sp]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 236 do
+            scope = scope[0]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 73)
+            flag = false
+        end
+        while opcode == 87 do
+            stack[sp + (1)] = stack[sp]
+            sp = sp + (1)
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 73 do
+            temp1 = {}
+            for i, v in ipairs(stack) do
+                temp1[i] = v
+            end
+            sp = 1
+            stack = {
+                [6] = stack[0],
+                [1] = temp1
+            }
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (7)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 226 do
+            stack[sp] = #stack[sp]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 146 do
+            sp = sp - (1)
+            stack[sp], stack[sp + (1)] = stack[sp][stack[sp + (1)]], nil
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        while opcode == 33 do
+            stack[sp] = stack[sp][1]
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+            flag = false
+        end
+        if flag then
+            pc = pc + (1)
+            addr = VM_COUNTER + (pc - (1)) * (4)
+            opcode = BITWISE_OR(VM_DATA[addr], 67)
+        end
+    end
+end
+
+STRING_GSUB = string.gsub
+STRING_CHAR = string.char
+
+return VM_MAIN()
