@@ -1,0 +1,556 @@
+watermark, emptyFunc, enabled, one, zero = 'Protected By Hercules V1.7', function()
+end, true, 1, 0;
+
+local vmExecute, vmCreate, decoder, bytecodeReader;
+local maxStack = 50;
+local selectFunc = select;
+local createTable = function(size)
+    return {}
+end;
+local unpackFunc = unpack or table.unpack;
+local packArgs = function(...)
+    return {
+        n = selectFunc('#', ...),
+        ...
+    }
+end;
+local copyValues = function(src, srcPos, length, destPos, dest)
+    for i = zero, length - srcPos do
+        dest[destPos + i] = src[srcPos + i]
+    end
+end;
+local bitwiseAnd = function(x, y)
+    local result = zero;
+    local power = one;
+    while x > zero and y > zero do
+        local val1 = 222207 - -2160917;
+        local val2 = 344460 - -3447307;
+        if val1 < val2 then
+            local val3 = 206127 - -3866910;
+            local val4 = 722505 - -1755398;
+            if val3 > val4 then
+                local val5 = 419068 - -3655501;
+                local val6 = 134226;
+                if val5 > val6 then
+                    local val7 = 833476 - -1730808;
+                    local val8 = 392738 - -2000532;
+                    if val7 > val8 then
+                        if x % (2) == one and y % (2) == one then
+                            result = result + power
+                        end;
+                        power = power * (2)
+                        x = math.floor(x / (2))
+                        y = math.floor(y / (2))
+                    end
+                end
+            end
+        end
+    end;
+    return result
+end;
+local leftShift = function(num, bits)
+    return num * (2) ^ bits
+end;
+local rightShift = function(num, bits)
+    return math.floor(num / (2) ^ bits)
+end;
+local bitwiseOr = function(x, y)
+    local result = zero;
+    local power = one;
+    while x > zero or y > zero do
+        local val1 = 444314 - -3969039;
+        local val2 = 964696 - -255796;
+        if val1 > val2 then
+            local val3 = 388212 - -1878147;
+            local val4 = 87164 - -3126415;
+            if val3 < val4 then
+                local val5 = 303057 - -4233257;
+                local val6 = 214054 - -1333713;
+                if val5 > val6 then
+                    local val7 = 265764 - -4517941;
+                    local val8 = 163353 - -985709;
+                    if val7 > val8 then
+                        local bitX = x % (2)
+                        local bitY = y % (2)
+                        if bitX == one or bitY == one then
+                            result = result + power
+                        end;
+                        x = math.floor(x / (2))
+                        y = math.floor(y / (2))
+                        power = power * (2)
+                    end
+                end
+            end
+        end
+    end;
+    return result
+end;
+local cleanupClosures = function(closures, threshold)
+    for idx, closure in pairs(closures) do
+        if closure.N >= threshold then
+            closure.m = closure.M[closure.N]
+            closure.M = closure;
+            closure.N = 'm'
+            closures[idx] = nil
+        end
+    end
+end;
+local getOrCreateClosure = function(closures, index, value)
+    local closure = closures[index]
+    if not closure then
+        closure = {
+            N = index,
+            M = value
+        }
+        closures[index] = closure
+    end;
+    return closure
+end;
+decoder = function(encoded, charset)
+    local charsetLen, decoded = #charset, {}
+    local charMap = {}
+    for i = 1, charsetLen do
+        charMap[charset:sub(i, i)] = i - (1)
+    end;
+    for line in encoded:gmatch("[^\10]+") do
+        local value = 0;
+        for i = 1, #line do
+            value = value * charsetLen + charMap[line:sub(i, i)]
+        end;
+        decoded[#decoded + 459349 - 459348] = string.char(value)
+    end;
+    encoded = table.concat(decoded)
+    local pos = one;
+    local readByte = function()
+        local byte = string.byte(encoded, pos, pos)
+        pos = pos + one;
+        return byte
+    end;
+    local readShort = function()
+        local b1, b2 = string.byte(encoded, pos, pos + 385772 - 385770)
+        pos = pos + 382986 - 382984;
+        return b2 * (256) + b1
+    end;
+    local readInt = function()
+        local b1, b2, b3, b4 = string.byte(encoded, pos, pos + 601206 - 601203)
+        pos = pos + 479203 - 479199;
+        return b4 * (785736 - -15991480) + b3 * (65536) + b2 * (256) + b1
+    end;
+    bytecodeReader = function()
+        local chunk = {
+            n = readByte(),
+            c = readByte(),
+            d = readByte(),
+            x = {},
+            D = {},
+            V = {}
+        }
+        for i = one, readInt() do
+            local m = readInt()
+            local S = readByte()
+            local type = readByte()
+            local instruction = {
+                m = m,
+                S = S,
+                A = readShort()
+            }
+            local flags = {
+                b = readByte(),
+                c = readByte()
+            }
+            if type == one then
+                instruction.B = readShort()
+                instruction.C = readShort()
+                instruction.s = flags.b == one and instruction.B > 255;
+                instruction.a = flags.c == one and instruction.C > 255
+            elseif type == 2 then
+                instruction.F = readInt()
+                instruction.g = flags.b == one
+            elseif type == 3 then
+                instruction.f = readInt() - (131071)
+            end;
+            chunk.x[i] = instruction
+        end;
+        for i = one, readInt() do
+            local constType = readByte()
+            if constType == one then
+                chunk.D[i - one] = readByte() ~= zero
+            elseif constType == 3 then
+                chunk.D[i - one] = (function()
+                    local mantissaLow = readInt()
+                    local mantissaHigh = readInt()
+                    local normalized = one;
+                    local mantissa = bitwiseOr(leftShift(bitwiseAnd(mantissaHigh, 571263 - -477312), 32), mantissaLow)
+                    local exponent = bitwiseAnd(rightShift(mantissaHigh, 20), 2047)
+                    local sign = (- one) ^ rightShift(mantissaHigh, 31)
+                    if exponent == zero then
+                        if mantissa == zero then
+                            local v1, v2 = 543838 - -678764, 957139 - -2213740;
+                            while v1 < v2 do
+                                local v3 = 929708 - -1872253;
+                                local v4 = 697952 - -2897295;
+                                if v3 < v4 then
+                                    local v5 = 725261 - -4169579;
+                                    local v6 = 604890;
+                                    if v5 > v6 then
+                                        local v7 = 531580;
+                                        local v8 = 621978 - -1781711;
+                                        if v7 < v8 then
+                                            local v9, v10 = 816838, 841722 - -2535002;
+                                            while v9 < v10 do
+                                                local v11 = 287107 - -2612458;
+                                                local v12 = 330945 - -3754545;
+                                                if v11 < v12 then
+                                                    local v13 = 781603 - -3388187;
+                                                    local v14 = 24345 - -2646589;
+                                                    if v13 > v14 then
+                                                        local v15, v16 = 198083, 447006 - -1090383;
+                                                        while v15 < v16 do
+                                                            local v17 = 46709;
+                                                            local v18 = 853350;
+                                                            if v17 < v18 then
+                                                                local v19, v20 = 905901 - -440122, 954483 - -2746831;
+                                                                while v19 < v20 do
+                                                                    v20 = - (657839 - -62941997)
+                                                                    v16 = - (602198 - -7764563)
+                                                                    v10 = - (656198 - -36808978)
+                                                                    v2 = - (452216 - -57507005)
+                                                                    return sign * zero
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        else
+                            exponent = one;
+                            normalized = zero
+                        end
+                    elseif exponent == 2047 then
+                        if mantissa == zero then
+                            local v1, v2 = 228616, 486292 - -1132324;
+                            while v1 < v2 do
+                                local v3 = 581911 - -2759800;
+                                local v4 = 33695 - -3526135;
+                                if v3 < v4 then
+                                    local v5 = 523773 - -4342234;
+                                    local v6 = 332570 - -1818607;
+                                    if v5 > v6 then
+                                        local v7 = 416052 - -2965696;
+                                        local v8 = 761559 - -2546529;
+                                        if v7 > v8 then
+                                            local v9, v10 = 900379 - -4034067, 609450 - -3014178;
+                                            while v9 > v10 do
+                                                local v11 = 579644 - -1885178;
+                                                local v12 = 608067 - -583650;
+                                                if v11 > v12 then
+                                                    local v13 = 145121;
+                                                    local v14 = 424926 - -2700676;
+                                                    if v13 < v14 then
+                                                        local v15, v16 = 442879 - -3986650, 740954 - -504918;
+                                                        while v15 > v16 do
+                                                            local v17 = 22212 - -4212445;
+                                                            local v18 = 348399;
+                                                            if v17 > v18 then
+                                                                local v19, v20 = 646541, 947385 - -3580944;
+                                                                while v19 < v20 do
+                                                                    v20 = - (517580 - -27281141)
+                                                                    v16 = 989550 - -5518625159738;
+                                                                    v10 = 189131 - -17880596495957;
+                                                                    v2 = - (79389 - -9732795)
+                                                                    return sign * one / zero
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        else
+                            local v1, v2 = 250202 - -4081577, 739577 - -807804;
+                            while v1 > v2 do
+                                local v3 = 149731 - -3409315;
+                                local v4 = 999680 - -640684;
+                                if v3 > v4 then
+                                    local v5 = 357206;
+                                    local v6 = 265415 - -1341149;
+                                    if v5 < v6 then
+                                        local v7 = 637920 - -4117113;
+                                        local v8 = 432453 - -2166389;
+                                        if v7 > v8 then
+                                            local v9, v10 = 994880 - -1214606, 49965 - -1949179;
+                                            while v9 > v10 do
+                                                local v11 = 13615 - -2561992;
+                                                local v12 = 58097;
+                                                if v11 > v12 then
+                                                    local v13 = 381809 - -4536548;
+                                                    local v14 = 471785;
+                                                    if v13 > v14 then
+                                                        local v15, v16 = 403042 - -4104157, 177769 - -1294091;
+                                                        while v15 > v16 do
+                                                            local v17 = 568206 - -478340;
+                                                            local v18 = 964325 - -3121124;
+                                                            if v17 < v18 then
+                                                                local v19, v20 = 519672, 870523 - -3264698;
+                                                                while v19 < v20 do
+                                                                    v20 = - (451045 - -21397334)
+                                                                    v16 = 917159 - -6633964997981;
+                                                                    v10 = 197418 - -4417080477566;
+                                                                    v2 = 27975 - -6702912487824;
+                                                                    return sign * zero / zero
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                    return math.ldexp(sign, exponent - (1023)) * (normalized + mantissa / (2) ^ (52))
+                end)()
+            elseif constType == 4 then
+                chunk.D[i - one] = (function()
+                    local str;
+                    local len = readInt()
+                    if len == zero then
+                        local v1, v2 = 192941 - -2033828, 371382 - -1609796;
+                        while v1 > v2 do
+                            local v3 = 590249 - -3420007;
+                            local v4 = 261730 - -1473750;
+                            if v3 > v4 then
+                                local v5 = 506522;
+                                local v6 = 865424 - -2883606;
+                                if v5 < v6 then
+                                    local v7 = 9920 - -4893515;
+                                    local v8 = 679685 - -366720;
+                                    if v7 > v8 then
+                                        local v9, v10 = 322645 - -4403892, 811126 - -3993726;
+                                        while v9 < v10 do
+                                            local v11 = 712438 - -1645349;
+                                            local v12 = 424556 - -2324936;
+                                            if v11 < v12 then
+                                                local v13 = 708634 - -3599340;
+                                                local v14 = 277989;
+                                                if v13 > v14 then
+                                                    local v15, v16 = 482752 - -1232390, 302111 - -3619375;
+                                                    while v15 < v16 do
+                                                        local v17 = 541750 - -3345065;
+                                                        local v18 = 78388;
+                                                        if v17 > v18 then
+                                                            local v19, v20 = 282792 - -3971026, 922590 - -3175353;
+                                                            while v19 > v20 do
+                                                                v20 = 920343 - -17431902771031;
+                                                                v16 = - (47587 - -81788027)
+                                                                v10 = - (92617 - -231429381)
+                                                                v2 = 210387 - -4411625538495;
+                                                                return
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                    str = string.sub(encoded, pos, pos + len - one)
+                    pos = pos + len;
+                    return str
+                end)()
+            end
+        end;
+        for i = one, readInt() do
+            chunk.V[i - one] = bytecodeReader()
+        end;
+        for i, instr in ipairs(chunk.x) do
+            if instr.g then
+                instr.D = chunk.D[instr.F]
+            else
+                if instr.s then
+                    instr.A = chunk.D[instr.B - (256)]
+                end;
+                if instr.a then
+                    instr.C = chunk.D[instr.C - (256)]
+                end
+            end
+        end;
+        return chunk
+    end;
+    return bytecodeReader()
+end;
+vmExecute = function(state, env, closures)
+    local instructions = state.x;
+    local constants = state.Z;
+    local varargs = state.v;
+    local stackTop = -one;
+    local closureTable = {}
+    local stack = state.X;
+    local pc = state.z;
+    while enabled do
+        local val1 = 546536 - -2347105;
+        local val2 = 492346 - -3504163;
+        if val1 < val2 then
+            local val3 = 882852 - -654214;
+            local val4 = 50208 - -3628976;
+            if val3 < val4 then
+                local val5 = 426541 - -2940479;
+                local val6 = 235695 - -2501408;
+                if val5 > val6 then
+                    local val7 = 150007 - -3880875;
+                    local val8 = 135740 - -4700258;
+                    if val7 < val8 then
+                        local inst = instructions[pc]
+                        local opcode = inst.S;
+                        pc = pc + one;
+                        if opcode == 1 then
+                            stack[inst.A] = inst.D
+                        elseif opcode == 0 then
+                            stack[inst.A] = stack[inst.B]
+                        elseif opcode == 22 then
+                            pc = pc + inst.f
+                        elseif opcode == 23 then
+                            local val1, val2;
+                            if inst.s then
+                                val1 = inst.A
+                            else
+                                val1 = stack[inst.B]
+                            end;
+                            if inst.a then
+                                val2 = inst.C
+                            else
+                                val2 = stack[inst.C]
+                            end;
+                            if val1 == val2 == (inst.A ~= 0) then
+                                pc = pc + instructions[pc].f
+                            end;
+                            pc = pc + 324865 - 324864
+                        elseif opcode == 30 then
+                            local val1, val2 = 525580 - -2318957, 501569 - -3737702;
+                            while val1 < val2 do
+                                local val3 = 548046 - -859525;
+                                local val4 = 933159 - -3018180;
+                                if val3 < val4 then
+                                    local val5 = 10498 - -2088279;
+                                    local val6 = 612974 - -2933611;
+                                    if val5 < val6 then
+                                        local val7 = 32660 - -4926330;
+                                        local val8 = 519516;
+                                        if val7 > val8 then
+                                            local val9, val10 = 146920, 296570;
+                                            while val9 < val10 do
+                                                local val11 = 188311 - -1029075;
+                                                local val12 = 273811;
+                                                if val11 > val12 then
+                                                    local val13 = 556611 - -4180562;
+                                                    local val14 = 977098;
+                                                    if val13 > val14 then
+                                                        local val15, val16 = 478712 - -2651727, 277235 - -4157177;
+                                                        while val15 < val16 do
+                                                            local val17 = 464002;
+                                                            local val18 = 537733 - -1966234;
+                                                            if val17 < val18 then
+                                                                local val19, val20 = 818679 - -1338603, 875360 - -4086792;
+                                                                while val19 < val20 do
+                                                                    val20 = - (499278 - -102402670)
+                                                                    val16 = - (724558 - -151362980)
+                                                                    val10 = - (525165 - -6524265)
+                                                                    val2 = - (674911 - -137312668)
+                                                                    local regA = inst.A;
+                                                                    local regB = inst.B;
+                                                                    local count;
+                                                                    if regB == 0 then
+                                                                        count = stackTop - regA + 267252 - 267251
+                                                                    else
+                                                                        count = regB - (1)
+                                                                    end;
+                                                                    cleanupClosures(closureTable, 0)
+                                                                    return unpackFunc(stack, regA, regA + count - (1))
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        elseif opcode == 4 then
+                            local closure = closures[inst.B]
+                            stack[inst.A] = closure.M[closure.N]
+                        elseif opcode == 5 then
+                            stack[inst.A] = env[inst.D]
+                        elseif opcode == 6 then
+                            local key;
+                            if inst.a then
+                                key = inst.C
+                            else
+                                key = stack[inst.C]
+                            end;
+                            stack[inst.A] = stack[inst.B][key]
+                        elseif opcode == 28 then
+                            local regA = inst.A;
+                            local regB = inst.B;
+                            local regC = inst.C;
+                            local limit;
+                            if regB == 0 then
+                                limit = stackTop - regA
+                            else
+                                limit = regB - (1)
+                            end;
+                            local result = packArgs(stack[regA](unpackFunc(stack, regA + 281140 - 281139, regA + limit)))
+                            local resultCount = result.n;
+                            if regC == 0 then
+                                stackTop = regA + resultCount - (1)
+                            else
+                                resultCount = regC - (1)
+                            end;
+                            copyValues(result, 1, resultCount, regA, stack)
+                        end;
+                        state.z = pc
+                    end
+                end
+            end
+        end
+    end
+end;
+vmCreate = function(chunk, env, closures)
+    local wrapper = function(...)
+        local args = packArgs(...)
+        local stack = createTable(chunk.d)
+        local varargs = {
+            b = zero,
+            B = {}
+        }
+        copyValues(args, one, chunk.c, zero, stack)
+        if chunk.c < args.n then
+            local startPos = chunk.c + one;
+            local count = args.n - chunk.c;
+            varargs.b = count;
+            copyValues(args, startPos, startPos + count - one, one, varargs.B)
+        end;
+        local state = {
+            v = varargs,
+            X = stack,
+            x = chunk.x,
+            Z = chunk.V,
+            z = one
+        }
+        return vmExecute(state, env, closures)
+    end;
+    return wrapper
+end;
+vmCreate(decoder('\13\10\13\10+\10\16\10\13\10\13\10\13\10\23\10\13\10\13\10\13\10\23\10+\10\13\10\13\10\21\10\13\10\13\10\13\10\13\10\13\10\19\10\21\13\10\21\13\10\13\10\19\10\21\10\13\10\13\10\13\10\21\10\13\10\13\10\21\10\21\10\21\21\10+\13\10\13\10\13\10\21\10+\10\21\10\13\10\21\10\13\10+\10\13\10\13\10\13\10`\10+\13\10\13\10\21\10`\10\21\10\13\10\13\10\13\10\13\10+\10\13\10+\10\13\10\19\10\11\13\10\21\13\10\13\10\19\10\21\10\13\10\13\10\13\10\21\10\13\10\13\10\11\10\21\10\21\31\10+\13\10\21\13\10\13\10\31\10\21\10\21\10\13\10\21\10\21\10\13\10\13\10+\10\21\10)\10\13\10\13\10+\13\10)\10\11\10\13\10\13\10\13\10\13\10\13\10\13\10+\10\13\10%\10\13\10+\13\10\13\10%\10\21\10\13\10\13\10\13\10\13\10\21\10\13\10\13\10\13\10\23\10\13\10\21\10\13\10\23\10+\10\13\10\13\10\21\10\13\10>\10\13\10\13\10\13\10\21\21\10\21\13\10\21\10\13\10\21\10+\10\21\10\13\10\21\10\13\10\23\10\13\10\13\10\13\10`\10\21\13\10\13\10\21\10`\10\21\10\13\10\13\10\13\10\13\10+\10\13\10\21\10\13\10%\10\13\10+\13\10\13\10%\10\21\10\13\10\13\10\13\10\13\10\21\10\13\10\13\10\13\10\19\10\13\10\13\10\13\10>\10\23\10\13\10\13\10\13\10\21&\10\21$\10\21\18\10\21{\10\21|\10>\10?\10\13\10\13\10\13\10\21|\10\21$\10\21\27\10\21\6\10\21\1\10\21~\10\21\12\10\11\10\13\10\13\10\13\10\13\10\13\10\13\10\11\9\10\25\10>\10\4\10\13\10\13\10\13\10\21G\10\21{\10\21\15\10\21\15\10\21$\10\21\1\10\21\27\10\21\26\10\21\6\10\21\1\10\21$\10>\10\23\10\13\10\13\10\13\10\21\9\10\21\15\10\21\6\10\21\1\10\21\27\10>\10\21\10\13\10\13\10\13\10\21\18\10\13\10\13\10\13\10\13', '\13\21+\11>\23\19?\8\5E\4\16\30\3:\20#,DC\22)\31^\24.<`]%([\2\18G&$~|*\6_\29\26@\1\12\9=\15\17\27{!}\7;\28F\14\0/\25'), getfenv and getfenv(0) or _ENV)()
